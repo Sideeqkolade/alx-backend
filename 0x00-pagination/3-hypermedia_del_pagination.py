@@ -1,22 +1,8 @@
 #!/usr/bin/env python3
-""" A script that holds class Server"""
+"""Deletion-resilient hypermedia pagination
+"""
 import csv
-import math
-from typing import List, Tuple
-
-
-def index_range(
-        page: int, page_size: int
-        ) -> Tuple:
-    """ A function that returns a tuple of size two containing a start
-        index and an end index corresponding to the range of indexes to
-        return in a list for those particular pagination parameters
-    """
-
-    start_index = (page - 1) * page_size
-    end_index = start_index + page_size
-
-    return start_index, end_index
+from typing import Dict, List
 
 
 class Server:
@@ -25,7 +11,10 @@ class Server:
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
+        """Initializes a new Server instance.
+        """
         self.__dataset = None
+        self.__indexed_dataset = None
 
     def dataset(self) -> List[List]:
         """Cached dataset
@@ -38,40 +27,23 @@ class Server:
 
         return self.__dataset
 
-    def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """Retrieves a page of data"""
-        assert isinstance(page, int) and isinstance(page_size, int)
-        assert page > 0 and page_size > 0
-        start_index, end_index = index_range(page, page_size)
-        data = self.dataset()
-        if start_index > len(data):
-            return []
-        return data[start_index:end_index]
+    def indexed_dataset(self) -> Dict[int, List]:
+        """Dataset indexed by sorting position, starting at 0
+        """
+        if self.__indexed_dataset is None:
+            dataset = self.dataset()
+            truncated_dataset = dataset[:1000]
+            self.__indexed_dataset = {
+                i: dataset[i] for i in range(len(dataset))
+            }
+        return self.__indexed_dataset
 
-    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
-        """Retrieves information about a page"""
-        page_data = self.get_page(page, page_size)
-        start_index, end_index = index_range(page, page_size)
-        total_pages = math.ceil(len(self.__dataset) / page_size)
-        page_info = {
-            'page_size': len(page_data),
-            'page': page,
-            'data': page_data,
-            'next_page': page + 1 if end_index < len(
-                self.__dataset) else None,
-            'prev_page': page - 1 if start_index > 0 else None,
-            'total_pages': total_pages,
-        }
-        return page_info
-
-    def get_hyper_index(
-            self, index: int = None, page_size: int = 10) -> Dict:
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
         """Retrieves info about a page from a given index and with a
         specified size.
         """
         data = self.indexed_dataset()
-        assert index is not None and index >= 0 and index <= max(
-                data.keys())
+        assert index is not None and index >= 0 and index <= max(data.keys())
         page_data = []
         data_count = 0
         next_index = None
