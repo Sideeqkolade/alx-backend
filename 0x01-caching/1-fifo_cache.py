@@ -5,7 +5,10 @@ from collections import OrderedDict
 
 
 class FIFOCache(BaseCaching):
-    """ class inherits from BaseCatching and is a caching system """
+    """ Represents an object that allows storing and
+        retrieving items from a dictionary with a FIFO
+        removal mechanism when the limit is reached.
+    """
     def __init__(self):
         """ initialize cache """
         super().__init__()
