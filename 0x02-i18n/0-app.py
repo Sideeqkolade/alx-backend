@@ -5,9 +5,9 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def show_page():
+def show_page()-> str:
     """returns the index.html page"""
-    return render_template('index.html')
+    return render_template('0-index.html')
 
 
 app.run(debug=True)
