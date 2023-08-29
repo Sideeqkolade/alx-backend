@@ -4,7 +4,7 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', strict_slashes=False)
 def show_page() -> str:
     """returns the index.html page"""
     return render_template('0-index.html')
