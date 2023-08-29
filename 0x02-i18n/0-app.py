@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """A flask setup"""
 from flask import Flask, render_template
+
+
 app = Flask(__name__)
 
 
 @app.route('/', strict_slashes=False)
-def show_page() -> str:
+def index() -> str:
     """returns the index.html page"""
     return render_template('0-index.html')
 
