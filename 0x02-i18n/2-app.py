@@ -4,9 +4,6 @@ from flask_babel import Babel
 from flask import Flask, render_template, request
 
 
-app = Flask(__name__)
-
-
 class Config:
     """Config class for babel"""
     LANGUAGES = ["en", "fr"]
@@ -14,13 +11,14 @@ class Config:
     BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
+app = Flask(app = Flask(__name__)
 app.config.from_object(Config)
 babel = Babel(app)
 
 
 @babel.localeselector
 def get_locale() -> str:
-    """a function that best matches the language"""
+    """Translates to the best match language"""
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
